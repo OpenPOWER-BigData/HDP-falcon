@@ -1,0 +1,137 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+A. Building & Installing Falcon
+===============================
+
+0. Prerequisites
+------------------
+
+You would need the following installed:
+
+* JDK 1.7
+* Maven 3.x
+
+*Note:* To build Falcon on Ubuntu/Centos set umask to 022. To do so, add the following line in ~/.bashrc or
+        ~/.bash_profile.
+        umask 022
+
+1. Building Falcon
+------------------
+
+a. Building falcon from the source release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* tar -xzvf apache-falcon-${project.version}-source.tar.gz
+* cd falcon-sources-${project.version}
+
+* export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m -noverify" && mvn clean install
+
+[optionally -Dhadoop.version=<<hadoop.version>> can be appended to build for a specific version of hadoop]
+*Note:* Falcon drops support for Hadoop-1 and only supports Hadoop-2 from Falcon 0.6 onwards
+        Falcon build with JDK 1.7 using -noverify option
+        To compile Falcon with Hive Replication, optionally "-P hadoop-2,hivedr" can be appended. For this
+        Hive >= 1.2.0 and Oozie >= 4.2.0 should be available.
+
+
+b. Building falcon from the source repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* git clone https://git-wip-us.apache.org/repos/asf/falcon.git falcon
+* cd falcon
+* export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m -noverify" && mvn clean install
+
+[optionally -Dhadoop.version=<<hadoop.version>> can be appended to build for a specific version of hadoop]
+*Note:* Falcon drops support for Hadoop-1 and only supports Hadoop-2 from Falcon 0.6 onwards
+        Falcon build with JDK 1.7 using -noverify option
+        To compile Falcon with Hive Replication, optionally "-P hadoop-2,hivedr" can be appended. For this
+        Hive >= 1.2.0 and Oozie >= 4.2.0 should be available.
+
+
+2. Deploying Falcon
+-------------------
+
+Once the build successfully completes, artifacts can be packaged for deployment.
+By default the falcon is built for embedded mode.
+
+* mvn clean assembly:assembly -DskipTests -DskipITs
+
+Tar can be found in {project dir}/target/apache-falcon-${project.version}-bin.tar.gz
+
+Tar is structured as follows
+
+|- bin
+   |- falcon
+   |- falcon-start
+   |- falcon-stop
+   |- falcon-config.sh
+   |- service-start.sh
+   |- service-stop.sh
+|- conf
+   |- startup.properties
+   |- runtime.properties
+   |- client.properties
+   |- log4j.xml
+   |- falcon-env.sh
+|- docs
+|- client
+   |- lib (client support libs)
+|- server
+   |- webapp
+      |- falcon.war
+|- hadooplibs
+|- README
+|- NOTICE.txt
+|- LICENSE.txt
+|- DISCLAIMER.txt
+|- CHANGES.txt
+
+
+3. Installing & running Falcon
+------------------------------
+
+a. Installing falcon
+~~~~~~~~~~~~~~~~~~~~
+
+* tar -xzvf apache-falcon-${project.version}-bin.tar.gz
+* cd falcon-${project.version}
+
+b. Starting Falcon Server
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* bin/falcon-start
+
+c. Using Falcon
+~~~~~~~~~~~~~~~
+
+* bin/falcon admin -version
+  Falcon server build version: {Version:"0.3-SNAPSHOT-rd7e2be9afa2a5dc96acd1ec9e325f39c6b2f17f7",Mode:"embedded"}
+
+* bin/falcon help
+  (for more details about falcon cli usage)
+
+d. Stopping Falcon Server
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* bin/falcon-stop
+
+4. Preparing oozie bundle for use with Falcon
+---------------------------------------------
+
+* cd <<project home>>
+* src/bin/pacakge.sh <<hadoop-version>>
+  >> ex. src/bin/pacakge.sh 2.5.0
+  >> oozie bundle available in target/package/oozie-4.1.0/distro/target/oozie-4.1.0-distro.tar.gz
