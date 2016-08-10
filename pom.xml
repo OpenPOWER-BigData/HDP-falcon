@@ -803,6 +803,10 @@
                         <artifactId>hadoop-auth</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-client</artifactId>
                     </exclusion>
